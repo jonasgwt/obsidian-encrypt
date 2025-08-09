@@ -18,7 +18,9 @@ jobs:
 
       - id: v
         name: Read version from manifest.json
-        run: echo "ver=$(node -p \"require('./manifest.json').version\")" >> $GITHUB_OUTPUT
+        run: |
+          ver=$(node -p "require('./manifest.json').version")
+          echo "ver=$ver" >> "$GITHUB_OUTPUT"
 
       - run: npm run build
 
