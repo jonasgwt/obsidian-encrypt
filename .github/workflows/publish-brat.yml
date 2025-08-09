@@ -22,14 +22,6 @@ jobs:
       # Build your plugin (adjust to your toolchain)
       - run: npm run build
 
-      # Stage only the runtime files into ./dist
-      - name: Prepare dist
-        run: |
-          mkdir -p dist
-          cp manifest.json dist/
-          [ -f styles.css ] && cp styles.css dist/ || true
-          cp main.js dist/
-
       # Publish dist/ to branch `brat` (branch will be created if missing)
       - name: Push to brat branch
         uses: JamesIves/github-pages-deploy-action@v4
