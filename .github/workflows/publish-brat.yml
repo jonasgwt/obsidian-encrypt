@@ -1,0 +1,39 @@
+name: Build & publish (BRAT)
+on:
+  push:
+    branches: [ test/workflow-brat ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      # Build your plugin (adjust to your toolchain)
+      - run: npm run build
+
+      # Stage only the runtime files into ./dist
+      - name: Prepare dist
+        run: |
+          mkdir -p dist
+          cp manifest.json dist/
+          [ -f styles.css ] && cp styles.css dist/ || true
+          cp main.js dist/
+
+      # Publish dist/ to branch `brat` (branch will be created if missing)
+      - name: Push to brat branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: brat
+          folder: dist
+          clean: true
