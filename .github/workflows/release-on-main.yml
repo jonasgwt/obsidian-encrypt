@@ -55,3 +55,6 @@ jobs:
           prerelease: false
           files: |
             ${{ steps.meta.outputs.zip_path }}
+            ${{ steps.meta.outputs.dist_dir }}/manifest.json
+            ${{ steps.meta.outputs.dist_dir }}/main.js
+            ${{ steps.meta.outputs.dist_dir }}/styles.css
