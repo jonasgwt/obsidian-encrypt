@@ -1,0 +1,41 @@
+name: Build & Release on main
+on:
+  push:
+    branches: [ test/workflow-brat ]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+
+      - id: v
+        name: Read version from manifest.json
+        run: echo "ver=$(node -p \"require('./manifest.json').version\")" >> $GITHUB_OUTPUT
+
+      - run: npm run build
+
+      - name: Verify build artifacts
+        run: |
+          test -f manifest.json
+          test -f main.js
+          [ -f styles.css ] || true
+
+      - name: Create/Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.ver }}
+          name: ${{ steps.v.outputs.ver }}
+          draft: false
+          prerelease: false
+          files: |
+            manifest.json
+            main.js
+            styles.css
